@@ -1,8 +1,11 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
-# Tiny Tapeout Verilog Project Template
+# TinyTapeout AND Gate Circuit Project
 
-- [Read the documentation for project](docs/info.md)
+A simple combinational logic project demonstrating multiple AND gate implementations for learning ASIC design.
+
+- [📋 Read the detailed project documentation](docs/info.md)
+- [🔧 View the project source code](src/project.v)
 
 ## What is Tiny Tapeout?
 
@@ -10,12 +13,95 @@ Tiny Tapeout is an educational project that aims to make it easier and cheaper t
 
 To learn more and get started, visit https://tinytapeout.com.
 
-## Set up your Verilog project
+## Project Overview
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
+This project implements **5 independent AND gates**:
+- **4 × 2-input AND gates**: Process pairs of input pins
+- **1 × 8-input AND gate**: Combines all input pins
+
+### Quick Architecture Summary
+
+```
+Inputs:  ui_in[7:0] (8 pins)
+Outputs: uo_out[4:0] (5 pins used)
+
+ui_in[1:0] → AND Gate 1 → uo_out[0]
+ui_in[3:2] → AND Gate 2 → uo_out[1]  
+ui_in[5:4] → AND Gate 3 → uo_out[2]
+ui_in[7:6] → AND Gate 4 → uo_out[3]
+ui_in[7:0] → 8-AND Gate → uo_out[4]
+```
+
+## How to Test This Project
+
+### Method 1: Local Testing (Recommended)
+
+**Prerequisites:**
+```bash
+# Ubuntu/Debian
+sudo apt install iverilog gtkwave python3 python3-pip
+
+# macOS  
+brew install icarus-verilog gtkwave python3
+```
+
+**Run Tests:**
+```bash
+cd test/
+pip install -r requirements.txt  # Install cocotb, pytest
+make clean && make               # Run all tests
+
+# Expected output:
+# TESTS=2 PASS=2 FAIL=0 SKIP=0
+```
+
+**View Waveforms:**
+```bash
+gtkwave tb.gtkw  # Opens with preset signals
+```
+
+### Method 2: Manual Test Patterns
+
+Test these input patterns to verify AND gate behavior:
+
+| Test Case | Input (`ui_in`) | Expected Output (`uo_out[4:0]`) |
+|-----------|-----------------|--------------------------------|
+| All zeros | `0b00000000` | `0b00000` |
+| Gate 1 active | `0b00000011` | `0b00001` |  
+| Gates 2&4 active | `0b11001100` | `0b01010` |
+| All ones | `0b11111111` | `0b11111` |
+
+### Method 3: GitHub Actions
+
+Push your changes and check the **Actions** tab:
+- ✅ **GDS Generation**: ASIC layout creation
+- ✅ **Test**: Automated cocotb testing  
+- ✅ **Documentation**: Auto-generated docs
+- ✅ **FPGA**: FPGA implementation (if enabled)
+
+## Project Structure
+
+```
+├── src/
+│   ├── project.v       # Main Verilog implementation
+│   └── config.json     # ASIC synthesis configuration
+├── test/
+│   ├── tb.v           # Verilog testbench
+│   ├── test.py        # Python cocotb tests
+│   ├── Makefile       # Test automation
+│   └── requirements.txt # Python dependencies
+├── docs/
+│   └── info.md        # Detailed technical documentation
+└── info.yaml          # TinyTapeout project metadata
+```
+
+## Development Workflow
+
+1. **Design**: Edit `src/project.v`
+2. **Test Locally**: `cd test/ && make`
+3. **Update Docs**: Edit `docs/info.md` and `info.yaml`
+4. **Commit & Push**: GitHub Actions auto-builds
+5. **Submit**: Use [TinyTapeout submission portal](https://app.tinytapeout.com/)
 
 The GitHub action will automatically build the ASIC files using [OpenLane](https://www.zerotoasiccourse.com/terminology/openlane/).
 

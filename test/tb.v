@@ -1,8 +1,13 @@
 `default_nettype none
 `timescale 1ns / 1ps
 
-/* This testbench just instantiates the module and makes some convenient wires
-   that can be driven / tested by the cocotb test.py.
+/* This testbench instantiates the AND circuit module and provides
+   test interface for cocotb testing.
+   
+   Circuit under test:
+   - 4x 2-input AND gates: ui_in[1:0], ui_in[3:2], ui_in[5:4], ui_in[7:6]
+   - 1x 8-input AND gate: all ui_in bits
+   - Outputs: uo_out[4:0] for AND gate results, uo_out[7:5] unused (0)
 */
 module tb ();
 
@@ -28,7 +33,7 @@ module tb ();
 `endif
 
   // Replace tt_um_example with your module name:
-  tt_um_example user_project (
+  tt_um_hasekimi_and_circuit user_project (
 
       // Include power ports for the Gate Level test:
 `ifdef GL_TEST
